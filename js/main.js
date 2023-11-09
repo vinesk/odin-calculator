@@ -48,28 +48,40 @@ const updateOutput = () => {
 
 const handleButtonClick = (value) => {
   if (value === "=") {
-    if (firstOperand && operator) {
+    if (operator) {
       currentNumber = operate(
         operator,
         firstOperand,
         parseFloat(currentNumber)
       );
-      firstOperand = null;
-      operator = null;
+      firstOperand = false;
+      operator = false;
     }
   } else if (value === "C") {
     currentNumber = "0";
-    firstOperand = null;
-    operator = null;
+    firstOperand = false;
+    operator1 = false;
+    operator2 = false;
   } else if (value === "+/-") {
     currentNumber = (parseFloat(currentNumber) * -1).toString();
   } else if (value === "%") {
     currentNumber = (parseFloat(currentNumber) / 100).toString();
-  } else if (["+", "-", "x", "/"].includes(value)) {
-    if (!firstOperand && !operator) {
-      firstOperand = parseFloat(currentNumber);
-      operator = value;
+  } else if (value === "." && !currentNumber.includes(".")) {
+    currentNumber += value;
+  } else if (
+    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(value)
+  ) {
+    if (operator) {
+      firstOperand === parseFloat(currentNumber)
+        ? (currentNumber = value)
+        : (currentNumber += value);
     } else {
+      currentNumber === "0"
+        ? (currentNumber = value)
+        : (currentNumber += value);
+    }
+  } else if (["+", "-", "x", "/"].includes(value)) {
+    if (operator) {
       currentNumber = operate(
         operator,
         firstOperand,
@@ -77,21 +89,11 @@ const handleButtonClick = (value) => {
       );
       firstOperand = parseFloat(currentNumber);
       operator = value;
-    }
-  } else if (
-    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(value)
-  ) {
-    if (!firstOperand && !operator) {
-      currentNumber === "0"
-        ? (currentNumber = value)
-        : (currentNumber += value);
     } else {
-      currentNumber = value;
+      firstOperand = parseFloat(currentNumber);
+      operator = value;
     }
-  } else if (value === "." && !currentNumber.includes(".")) {
-    currentNumber += value;
   }
-
   updateOutput();
 };
 
